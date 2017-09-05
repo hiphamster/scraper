@@ -28,9 +28,11 @@ class YelpSpider(scrapy.Spider):
             phone = listing.find('.//span[@class="biz-phone"]').text.strip()
 
             yield {'name': name, 'phone': phone}
-
+            
+        """
         next_page = html_tree.find(
             './/a[@class="u-decoration-none next pagination-links_anchor"]')
         if (next_page):
             next_page = response.urljoin(next_page.get('href'))
             yield scrapy.Request(url=next_page, callback=self.parse)
+        """
