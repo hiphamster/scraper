@@ -1,0 +1,7 @@
+# Files not to be tracked
+__pycache__
+**/__pycache__
+*.pyc
+*.log
+*.db
+out.json
