@@ -1,4 +1,5 @@
 import scrapy
+import requests
 from lxml import html
 
 
@@ -12,15 +13,25 @@ class YelpSpider(scrapy.Spider):
     }
 
     def start_requests(self):
-        urls = [
-            'https://www.yelp.com/search?find_desc=coffee&find_loc=Berkeley%2C+CA&ns=1'
-        ]
+
+        print('making a request...')
+        r = requests.get('http://e2107693.ngrok.io/leads')
+        print('waiting....')
+        print('done!')
+
+        urls = r.json()
+        print('url: {}'.format(urls))
+
+        #        urls = [
+        #            'https://www.yelp.com/search?find_desc=coffee&find_loc=Berkeley%2C+CA&ns=1'
+        #        ]
         for url in urls:
             req = scrapy.Request(url=url, callback=self.parse)
             yield req
 
     def parse(self, response):
-        html_tree = html.fromstring(str(response.body, 'utf-8'))
+        # html_tree = html.fromstring(str(response.body, 'utf-8'))
+        html_tree = html.fromstring(str(response.body))
 
         for listing in html_tree.findall('.//div[@class="biz-listing-large"]'):
             name = listing.find(
@@ -28,7 +39,6 @@ class YelpSpider(scrapy.Spider):
             phone = listing.find('.//span[@class="biz-phone"]').text.strip()
 
             yield {'name': name, 'phone': phone}
-            
         """
         next_page = html_tree.find(
             './/a[@class="u-decoration-none next pagination-links_anchor"]')
